@@ -1,0 +1,59 @@
+1. Functions in Networks.py that need to be used in the experiment
+
+network = Network(sizes, functs = None)
+Input:  the list of integers indicating the number of neurons of each layer "sizes"
+        the list indicating the activation functions "functs" (e.g. [None, sigmoid, sigmoid])  
+Output: "network" is the initialized neural network with randomly generated weights and biases distribution
+By default, the functs are all sigmoid except the input layer
+This is used to generate the neural network
+
+
+Network.training(training_data, T, n, alpha, lmbda = None, validation_data = None)
+Input:  list training data "training_data"
+        the maximum iteration number "T"
+        the size of the batch "n"
+        the learning rate "alpha"
+        the L2 lambda parameter "lmbda" (if None then L2 regulariztion is not applied)
+        the list validation data (if None then the early stopping is not applied)        
+This is used to train the network
+Once the validation is given, the accuracy number will be evaluated given the validation data in every iteration
+The weights and biases distribution will be saved before updating in every iteration, and once the accuracy drops,
+the weights and biases will be restored and then the training will be terminated in advance. 
+
+
+acc_num = Network.evaluate(test_data)
+Input:  the list of test data "test_data"
+Output: "acc_num" is the number that the network gives accurate inference
+
+
+2. Before final comparison
+ 
+We need to construct the ANN net work and modify the parameters for training befor the comparison.
+
+The ANN network architecture used is [784,50,10]. There's only one hidden layer with 50 neurons. 
+This decreases the time cost and the complexity and maintains the accuracy.
+
+For each activation function, the parameters need to be found respectively.
+We can quickly find out rough values for the parameters by using an ANN network with the architecture [784,10] and 
+only train it and validate with part of training data and validation data. 
+In this way, the time cost for one iteration can be very small, and we can quickly have a try for different values.
+
+For instance, for sigmoid we can use the codes
+n = Networks.Network([784,10])
+n.training(training_data[:10000],10,10,1,1,validation_data[:100])
+to have a try and modify the values until we find a good enough result
+
+Then we can use the original network and all the data to carefully modify parameters for better performance
+
+
+3. Comparison
+
+The training data, validation data, and test data are obtained from the database loader function.
+Remember to use list() to change them into lists in order to be used in the functions in Networks.py.
+
+The ontained parameters are placed in order for later use.
+
+To test the activation functions with the same initialized weights and biases distributions, copy.deepcopy() is used to copy the distributions.
+Remember to set different activation functions and derevative functions for ANN ro test different activation functions.
+
+The coodes for comparison is given in experiments.py.
