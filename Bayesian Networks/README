@@ -1,0 +1,102 @@
+1. Structural Learning
+
+[graph, totalScore] = K2Algorithm(K, data, scoreFunction, timelimit = 1800)
+Input:  the maximum number of parents of a variable "K"
+        the list of lists "data"
+        the score function "K2Score" or "BICScore"
+        "timelimit" that limits the time which is by default 1800s
+Output: [graph, totalScore]
+        "graph" is a 2-dimensional list representing the resulting BN structure
+        "totalScore" is the sum of all the scores of variables in this BN structure
+This is applied to the data set with a lot of possible orders
+Constantly produce random order and check the corresponding graph and totalScore
+Only return the graph with the maximum totalScore
+
+
+[graph, totalScore] = K2AlgorithmAll(K, data, scoreFunction)
+Input:  the maximum number of parents of a variable "K"
+        the list of lists "data"
+        the score function "K2Score" or "BICScore"
+Output: [graph, totalScore]
+        "graph" is a 2-dimensional list representing the resulting BN structure
+        "totalScore" is the sum of all the scores of variables in this BN structure
+This is applied to the data set with not many possible orders
+Produce all possible permutations as order and check the corresponding graph and totalScore
+Only return the graph with the maximum totalScore
+
+
+[graph, totalScore] = K2Ordered(K, data, scoreFunction, order = None)
+Input:  the maximum number of parents of a variable "K"
+        the list of lists "data"
+        the score function "K2Score" or "BICScore"
+        "order" which is a list of indices representing the order, if None, the original order will be used 
+Output: [graph, totalScore]
+        "graph" is a 2-dimensional list representing the resulting BN structure
+        "totalScore" is the sum of all the scores of variables in this BN structure
+Given a specific order and return the corresponding graph and totalScore
+If given None as order or no order is given, the order list(range(len(data[0]))) will be used
+
+
+score = K2Score(variable, parents, data)
+Input:  the index of a variable, called "variable"
+        a list of indices of the parents of the variable, called "parents"
+        the training data set, "data"
+Output: the corresponding K2 score
+
+
+score = BICScore(variable, parents, data)
+Input:  the index of a variable, called "variable"
+        a list of indices of the parents of the variable, called "parents"
+        the training data set, "data"
+Output: the corresponding BIC score
+
+
+2. Parameter Learning
+
+cpt = MLEstimationVariable(graph, data)
+Input:  "graph" is a 2-dimensional list representing the resulting BN structure
+        the data set "data"
+Output: "cpt" the cpt corresponding to the graph
+
+cpt = MLEstimation(variable, graph, data)
+Input:  "variable" the index of the variable 
+        "graph" is a 2-dimensional list representing the resulting BN structure
+        the data set "data"
+Output: "cptList" the list in cpt corresponding to the variable
+
+
+3. Inference
+
+pr = variableElimination(index, observations, model)
+Input:  "index" is the index of the variable concerned
+        "observations" the pairs indicating what is observed
+        "model" = (graph, cpt)
+Output: "pr" a list containg the probabilties
+
+
+4. Application 
+just run "wine.py" and "protein.py"
+in "wine.py", limits the time for structural learning
+in "protein.py", all possible orders are checked
+after the graph and cpt is obtained, use the function "accScore" to obtain the accuracy, 
+and use "mostrelatedvars" to obtain the subsets with different sizes k that are most useful to predict the value of the variable of interest
+
+accuracy = accScore(D, model, var, varchoices, observedindices = None)
+Input:  "D" the list of lists containing the data for infering
+        "model" = (graph, cpt)
+        "var" is the index of the variable of interst
+        "varchoices" is a list of lists containing the possible values for different variable, varchoices[var] contains the possible values of var
+        "observedindices" is a list containing the indices of all the observed variables, it by default contain all the variables except "var"
+Output: "accuracy" the rate of accuracy
+
+
+(accscores, mostrelated) = mostrelatedvars(D, model, var, varchoices)
+Input:  "D" the list of lists containing the data for infering
+        "model" = (graph, cpt)
+        "var" is the index of the variable of interst
+        "varchoices" is a list of lists containing the possible values for different variable, varchoices[var] contains the possible values of var
+Output: (accscores, mostrelated)
+        "accscore" a list of the greatest accuracy rate corresponding to the size k of the subset of variables
+        "mostrelated" a list of lists containing the corresponding subset of observed indices that has the greatest accuracy and appear first
+Check all the possible combinations of observed indices in order
+Only return the combination and result that appears first and has the greatest accuracy  
